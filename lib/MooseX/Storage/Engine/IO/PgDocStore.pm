@@ -6,7 +6,6 @@ use Moose;
 use namespace::autoclean;
 
 use Carp;
-use DBI;
 
 has 'dbh' => (
     is => 'ro',
