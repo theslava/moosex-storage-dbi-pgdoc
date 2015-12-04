@@ -1,3 +1,4 @@
+# ABSTRACT: Store Moose objects in Postgres as JSON
 package MooseX::Storage::IO::PgDocStore;
 
 our $VERSION = '0.01';
