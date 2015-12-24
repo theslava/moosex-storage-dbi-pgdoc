@@ -3,6 +3,7 @@ package MooseX::Storage::IO::PgDocStore;
 
 our $VERSION = '0.01';
 
+use JSON;
 use Moose::Role;
 use MooseX::Storage::Engine::IO::PgDocStore;
 use namespace::autoclean;
@@ -13,7 +14,9 @@ requires 'uuid';
 
 sub load {
     my ($class, $dbh, $uuid, @args) = @_;
-    $class->thaw( MooseX::Storage::Engine::IO::PgDocStore->new( dbh => $dbh, uuid => $uuid)->load(), @args);
+    my $json = MooseX::Storage::Engine::IO::PgDocStore->new( dbh => $dbh, uuid => $uuid)->load();
+    my $hash = decode_json($json);
+    return eval $hash->{__CLASS__}.'->thaw($json, @args)';
 }
 
 sub store {
