@@ -44,11 +44,20 @@ my $store_sql = <<EOF;
     INSERT INTO json (uuid, json)
         VALUES (?, ?)
 EOF
+my $update_sql = <<EOF;
+    UPDATE json 
+    SET json = ?
+    WHERE uuid = ?
+EOF
 
     my $sth = $self->dbh->prepare($store_sql);
     my $rv = $sth->execute($self->uuid, $json);
     if (!$rv) {
-        croak "Error storing object ($self->uuid): $sth->err";
+        $sth = $self->dbh->prepare($update_sql);
+        $rv = $sth->execute($json, $self->uuid);
+        if (!$rv) {
+            croak "Failed to insert or update object ($self->uuid): $sth->err";
+        }
     }
     return $rv;
 }
