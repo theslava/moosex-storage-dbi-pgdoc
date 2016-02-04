@@ -19,11 +19,10 @@ has 'load_sql' => (
     default => 'SELECT data FROM data WHERE data @> ? LIMIT 1',
 );
 
-# TODO: change to upsert
 has 'store_sql' => (
     is => 'ro',
     isa => 'Str',
-    default => 'INSERT INTO data (data) VALUES (?) ON CONFLICT (?) DO UPDATE SET data = EXCLUDED.data',
+    default => 'INSERT INTO data (data) VALUES (?) ON CONFLICT (uuid) DO UPDATE SET data = EXCLUDED.data',
 );
 
 sub load {
@@ -38,10 +37,10 @@ sub load {
 }
 
 sub store {
-    my ($self, $filter, $object) = @_;
+    my ($self, $object) = @_;
 
     my $sth = $self->dbh->prepare($self->store_sql);
-    my $rv = $sth->execute($object, 'uuid');
+    my $rv = $sth->execute($object);
     if (!$rv) {
         croak "Failed to insert or update object ($object): $sth->err";
     }

@@ -7,7 +7,6 @@ use Carp;
 use JSON;
 use Moose::Role;
 use MooseX::Storage::Engine::IO::PgJSON;
-use MooseX::Role::Parameterized;
 use namespace::autoclean;
 
 requires 'freeze';
@@ -25,8 +24,8 @@ sub load {
 }
 
 sub store {
-    my ($self, $dbh, $filter) = @_;
-    MooseX::Storage::Engine::IO::PgJSON->new( dbh => $dbh )->store( $filter,  $self->freeze );
+    my ($self, $dbh) = @_;
+    MooseX::Storage::Engine::IO::PgJSON->new( dbh => $dbh )->store( $self->freeze );
 }
 
 no Moose::Role;
