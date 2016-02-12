@@ -17,6 +17,7 @@ sub load {
     my $object = MooseX::Storage::Engine::IO::PgJSON->new( dbh => $dbh )->load( $filter );
     my $hash = decode_json($object);
     $class = $hash->{__CLASS__} // $class;
+    eval "require $class";
     $object = "$class"->thaw($object, @args);
     if ($@) {
         croak 'Could not retrieve object';
