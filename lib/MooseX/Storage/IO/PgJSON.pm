@@ -18,10 +18,11 @@ sub load {
     my $hash = decode_json($object);
     $class = $hash->{__CLASS__} // $class;
     eval "require $class";
-    $object = "$class"->thaw($object, @args);
     if ($@) {
-        croak 'Could not retrieve object';
+        croak 'Could not retrieve object: '.$@;
+        return;
     }
+    $object = "$class"->thaw($object, @args);
     return $object;
 }
 
