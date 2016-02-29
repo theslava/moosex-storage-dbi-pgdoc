@@ -14,16 +14,10 @@ requires 'thaw';
 
 sub load {
     my ($class, $dbh, $filter, @args) = @_;
-    my $object = MooseX::Storage::Engine::IO::PgJSON->new( dbh => $dbh )->load( $filter );
-    my $hash = decode_json($object);
-    $class = $hash->{__CLASS__} // $class;
-    eval "require $class";
-    if ($@) {
-        croak 'Could not retrieve object: '.$@;
-        return;
-    }
-    $object = "$class"->thaw($object, @args);
-    return $object;
+    return $class->thaw(
+        MooseX::Storage::Engine::IO::PgJSON->new( dbh => $dbh )->load( $filter ),
+        @args,
+    );
 }
 
 sub store {
